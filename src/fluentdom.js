@@ -1,9 +1,23 @@
+/**
+ * Get a FluentDOM builder instance
+ *
+ * You can provide a specific DOM document or a boolean. Boolean
+ * true will create new document, false will fetch the global document.
+ *
+ * @param {Document|boolean} [dom]
+ * @param {XPathNSResolver|Function|{}} [resolver]
+ * @returns {FluentDOM}
+ * @constructor
+ */
 var FluentDOM = function(dom, resolver) {
 
   if (window == this) {
     return new FluentDOM(dom, resolver);
   }
 
+  /**
+   * Consolidate the namespace resolver
+   */
   var namespaces = (function(resolver) {
     var result;
     if (resolver instanceof Function && !resolver.lookupNamespaceURI instanceof Function) {
@@ -32,6 +46,13 @@ var FluentDOM = function(dom, resolver) {
     return result;
   })(resolver);
 
+  /**
+   * Create an element node.
+   *
+   * @param {string} name
+   * @param {...(string|Node|Object|Array)}
+   * @returns {Element|*}
+   */
   this.create = function(name) {
 
     var append = function(node, value) {
