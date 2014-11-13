@@ -35,7 +35,7 @@ var FluentDOM = function(dom, resolver) {
   this.create = function(name) {
 
     var append = function(node, value) {
-      var i;
+      var i, namespace;
       if (value instanceof Node) {
         if (value instanceof Document) {
           if (value.documentElement) {
@@ -61,14 +61,23 @@ var FluentDOM = function(dom, resolver) {
       } else if (value instanceof Object){
         for (i in value) {
           if (!value.hasOwnProperty(i)) { continue; }
-          node.setAttributeNS(namespaces.fromNodeName(i), i, value[i]);
+          if (namespace = namespaces.fromNodeName(i)) {
+            node.setAttributeNS(namespaces.fromNodeName(i), i, value[i]);
+          } else {
+            node.setAttribute(i, value[i]);
+          }
         }
       } else if (typeof value == 'string') {
         node.appendChild(dom.createTextNode(value.toString()));
       }
     };
 
-    node = dom.createElementNS(namespaces.fromNodeName(name), name);
+    var namespace = namespaces.fromNodeName(name);
+    if (namespace) {
+      node = dom.createElementNS(namespace, name);
+    } else {
+      node = dom.createElement(name);
+    }
     for (var i = 1; i < arguments.length; i++) {
       append(node, arguments[i]);
     }

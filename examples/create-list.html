@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>Create A List</title>
+</head>
+<body>
+  <div id="demo">
+  </div>
+  <script type="text/javascript" src="../src/fluentdom.js"></script>
+  <script>
+   var _ = FluentDOM().create;
+   document.querySelector('#demo').appendChild(
+     _(
+       'ul',
+       _('li', 'one', {class : 'foo'}),
+       _('li', 'two', {class : 'foo'}),
+       _('li', 'three')
+     )
+   );
+  </script>
+</body>
+</html>
