@@ -29,7 +29,7 @@ var FluentDOM = function(dom, resolver) {
         list = (list instanceof Object) ? list : {};
         return function(prefix) {
           if (prefix == '') {
-            return list['#default'] || null;
+            return null;
           }
           return list[prefix] || null;
         };
@@ -47,6 +47,44 @@ var FluentDOM = function(dom, resolver) {
     return result;
   })(resolver);
 
+  var append = function(node, value) {
+    var i, namespace;
+    if (value instanceof Node) {
+      if (value instanceof Document) {
+        if (value.documentElement) {
+          node.appendChild(node.ownerDocument.importNode(value.documentElement, true));
+        }
+      } else {
+        if (node.ownerDocument != value.ownerDocument) {
+          value = node.ownerDocument.importNode(value, true);
+        } else {
+          value = value.cloneNode(true);
+        }
+        if (value instanceof Attr) {
+          node.setAttributeNode(value);
+        } else {
+          node.appendChild(value);
+        }
+      }
+    } else if (value instanceof Array) {
+      for (i = 0; i < value.length; i++) {
+        append(node, value[i]);
+      }
+      node.appendChild(dom.createTextNode(value));
+    } else if (value instanceof Object){
+      for (i in value) {
+        if (!value.hasOwnProperty(i)) { continue; }
+        if (namespace = namespaces.fromNodeName(i)) {
+          node.setAttributeNS(namespaces.fromNodeName(i), i, value[i]);
+        } else {
+          node.setAttribute(i, value[i]);
+        }
+      }
+    } else if (typeof value == 'string') {
+      node.appendChild(dom.createTextNode(value.toString()));
+    }
+  };
+
   /**
    * Create an element node.
    *
@@ -56,44 +94,6 @@ var FluentDOM = function(dom, resolver) {
    */
   this.create = function(name) {
     var namespace, node;
-
-    var append = function(node, value) {
-      var i, namespace;
-      if (value instanceof Node) {
-        if (value instanceof Document) {
-          if (value.documentElement) {
-            node.appendChild(node.ownerDocument.importNode(value.documentElement, true));
-          }
-        } else {
-          if (node.ownerDocument != value.ownerDocument) {
-            value = node.ownerDocument.importNode(value, true);
-          } else {
-            value = value.cloneNode(true);
-          }
-          if (value instanceof Attr) {
-            node.setAttributeNode(value);
-          } else {
-            node.appendChild(value);
-          }
-        }
-      } else if (value instanceof Array) {
-        for (i = 0; i < value.length; i++) {
-          append(node, value[i]);
-        }
-        node.appendChild(dom.createTextNode(value));
-      } else if (value instanceof Object){
-        for (i in value) {
-          if (!value.hasOwnProperty(i)) { continue; }
-          if (namespace = namespaces.fromNodeName(i)) {
-            node.setAttributeNS(namespaces.fromNodeName(i), i, value[i]);
-          } else {
-            node.setAttribute(i, value[i]);
-          }
-        }
-      } else if (typeof value == 'string') {
-        node.appendChild(dom.createTextNode(value.toString()));
-      }
-    };
 
     namespace = namespaces.fromNodeName(name);
     if (namespace) {
@@ -115,6 +115,28 @@ var FluentDOM = function(dom, resolver) {
   };
   this.create.pi = function(content) {
     return dom.createProcessingInstruction(content);
+  };
+  this.create.each = function(list, callback) {
+    var fragment, node, i;
+    callback = (callback instanceof Function) ? callback : function(item) { return item; };
+    fragment = dom.createDocumentFragment();
+    if (list instanceof Array) {
+      for (i = 0; i < list.length; i++) {
+        node = callback(list[i], i);
+        if (node) {
+          append(fragment, node);
+        }
+      }
+    } else if (list instanceof Object) {
+      for (i in list) {
+        if (!list.hasOwnProperty(i)) { continue; }
+        node = callback(list[i], i);
+        if (node) {
+          append(fragment, node);
+        }
+      }
+    }
+    return fragment;
   };
 
   this.document = function(node) {
