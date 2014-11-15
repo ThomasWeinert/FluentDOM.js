@@ -16,6 +16,45 @@ var FluentDOM = function(dom, resolver) {
   }
 
   /**
+   * @param {XPathResult} result
+   * @constructor
+   */
+  var NodeList = function(result) {
+    this.result = result;
+    this.items = [];
+  };
+
+  /**
+   * @returns {Array}
+   */
+  NodeList.prototype.toArray = function() {
+    var array = [];
+    this.each(
+      function() {
+        array.push(this);
+      }
+    );
+    return array;
+  };
+
+  /**
+   * @param {Function} callback
+   */
+  NodeList.prototype.each = function(callback) {
+    var index = 0, item;
+    for (var i = 0; i < this.items.length; i++) {
+      callback.call(this.items[i], index++);
+    }
+    if (this.result) {
+      while (item = this.result.iterateNext()) {
+        this.items.push(item);
+        callback.call(item, index++);
+      }
+    }
+    this.result = null;
+  };
+
+  /**
    * Consolidate the namespace resolver
    */
   var namespaces = (function(resolver) {
@@ -153,9 +192,34 @@ var FluentDOM = function(dom, resolver) {
     return result;
   };
 
+  this.evaluate = function(expression, context, resultType) {
+    context = context instanceof Node ? context : dom;
+    resultType = resultType || XPathResult.ANY_TYPE;
+    var result = dom.evaluate(
+      expression,
+      context,
+      { lookupNamespaceURI : namespaces },
+      resultType,
+      null
+    );
+    switch (result.resultType) {
+      case XPathResult.BOOLEAN_TYPE : return result.booleanValue;
+      case XPathResult.NUMBER_TYPE : return result.numberValue;
+      case XPathResult.STRING_TYPE : return result.stringValue;
+      case XPathResult.FIRST_ORDERED_NODE_TYPE : return result.singleNodeValue;
+      default :
+        return new NodeList(result);
+    }
+  };
+
   if (dom === true) {
     dom = document.implementation.createDocument('', '', null);
   } else if (!(dom instanceof Document)) {
     dom = document;
+  }
+  if (dom && !dom.evaluate) {
+    if (typeof installDOM3XPathSupport != 'undefined') {
+      installDOM3XPathSupport(dom, new XPathParser());
+    }
   }
 };

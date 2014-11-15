@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title></title>
+  <style type="text/css">
+    summary > h2 {
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div id="demo"></div>
+  <script type="text/javascript" src="../release/fluentdom.min.js"></script>
+  <script type="text/javascript">
+    var xml =
+      '<atom:feed xmlns:atom="http://www.w3.org/2005/Atom">' +
+        '<atom:title>Example Feed</atom:title>' +
+        '<atom:link href="http://example.org/"/>' +
+        '<atom:updated>2003-12-13T18:30:02Z</atom:updated>' +
+        '<atom:author>' +
+          '<atom:name>John Doe</atom:name>' +
+        '</atom:author>' +
+        '<atom:id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</atom:id>' +
+        '<atom:entry>' +
+          '<atom:title>Atom-Powered Robots Run Amok</atom:title>' +
+          '<atom:link href="http://example.org/2003/12/13/atom03"/>' +
+          '<atom:id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</atom:id>' +
+          '<atom:updated>2003-12-13T18:30:02Z</atom:updated>' +
+          '<atom:summary>Some text.</atom:summary>' +
+        '</atom:entry>' +
+      '</atom:feed>';
+
+    var parser = new DOMParser();
+    var fd = FluentDOM(parser.parseFromString(xml, 'application/xml'), {'atom' : 'http://www.w3.org/2005/Atom'});
+    var read = fd.evaluate;
+    var write = FluentDOM().create;
+
+    document.querySelector('#demo').appendChild(
+      write('h1', read('string(/atom:feed/atom:title)'))
+    );
+    document.querySelector('#demo').appendChild(
+      write.each(
+        read('/atom:feed/atom:entry').toArray(),
+        function(entry) {
+          return write(
+            'details',
+            write(
+              'summary',
+              write(
+                'h2',
+                write(
+                  'a',
+                  {
+                    href : read('string(.//atom:link[@rel = "alternate" and @type = "text/html"]/@href)')
+                  },
+                  read('string(atom:title)', entry)
+                )
+              )
+            ),
+            write(
+              'div',
+              read('string(atom:summary)', entry)
+            )
+          );
+        }
+      )
+    );
+  </script>
+</body>
+</html>
