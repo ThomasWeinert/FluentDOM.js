@@ -1,1 +1,7 @@
+# Project files
 .idea/
+# Build data
+build/
+
+# Dependency directory
+node_modules/

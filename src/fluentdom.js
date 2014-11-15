@@ -25,17 +25,18 @@ var FluentDOM = function(dom, resolver) {
     } else if (resolver && resolver.lookupNamespaceURI instanceof Function) {
       result = resolver.lookupNamespaceURI;
     } else {
-      result = function(namespaces) {
-        namespaces = (namespaces instanceof Object) ? namespaces : {};
+      result = function(list) {
+        list = (list instanceof Object) ? list : {};
         return function(prefix) {
           if (prefix == '') {
-            return null;
+            return list['#default'] || null;
           }
-          return namespaces[prefix] || null;
+          return list[prefix] || null;
         };
       }(resolver);
     }
     result.fromNodeName = function(nodeName) {
+      var prefix;
       if (nodeName.indexOf(':') > -1) {
         prefix = nodeName.substr(0, nodeName.indexOf(':')) || '';
       } else {
@@ -54,6 +55,7 @@ var FluentDOM = function(dom, resolver) {
    * @returns {Element|*}
    */
   this.create = function(name) {
+    var namespace, node;
 
     var append = function(node, value) {
       var i, namespace;
@@ -93,7 +95,7 @@ var FluentDOM = function(dom, resolver) {
       }
     };
 
-    var namespace = namespaces.fromNodeName(name);
+    namespace = namespaces.fromNodeName(name);
     if (namespace) {
       node = dom.createElementNS(namespace, name);
     } else {
@@ -113,6 +115,20 @@ var FluentDOM = function(dom, resolver) {
   };
   this.create.pi = function(content) {
     return dom.createProcessingInstruction(content);
+  };
+
+  this.document = function(node) {
+    var result;
+    if (dom.documentElement) {
+      result = dom.implementation.createDocument('', '', null);
+    } else {
+      result = dom;
+    }
+    result.appendChild(node);
+    result.save = function() {
+      return (new XMLSerializer()).serializeToString(dom);
+    };
+    return result;
   };
 
   if (dom === true) {
