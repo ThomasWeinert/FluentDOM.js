@@ -9,16 +9,19 @@ Basic usage
 -----------
 
 ```javascript
-fd = FluentDOM(true, { ns : 'urn:ns' })
+fd = FluentDOM(true, { ns : 'urn:ns' }, 'text/xml')
 ```
 
 The function `FluentDOM()` returns a new FluentDOM instance with a document a namespace resolver.
 
-The first argument is a document or a boolean. If no argument is provided, or it is `false` the global variable
-`document` will be used. If it is `true` a new Document instance will be created.
+The first argument is the source. If no argument is provided, or it is `false` the global variable
+`document` will be used. If it is `true` a new Document instance will be created. Other possibilities depend on the
+mimetype. A string will be parsed as xml by default.
 
 The second argument is used to resolve namespace prefixes. It can be an namespace resolver, a function
 or an key-value object.
+
+The third argument is the mimetype. The default value is `text/xml`.
 
 FluentDOM()::create
 -------------------

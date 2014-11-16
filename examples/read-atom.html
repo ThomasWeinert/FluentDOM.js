@@ -31,8 +31,7 @@
         '</atom:entry>' +
       '</atom:feed>';
 
-    var parser = new DOMParser();
-    var fd = FluentDOM(parser.parseFromString(xml, 'application/xml'), {'atom' : 'http://www.w3.org/2005/Atom'});
+    var fd = FluentDOM(xml, {'atom' : 'http://www.w3.org/2005/Atom'});
     var read = fd.evaluate;
     var write = FluentDOM().create;
 

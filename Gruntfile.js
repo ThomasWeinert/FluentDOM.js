@@ -28,5 +28,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.registerTask('watcher', ['watch']);
-  grunt.registerTask('default', ['uglify:release']);
+  grunt.registerTask('release', ['uglify:release']);
 };

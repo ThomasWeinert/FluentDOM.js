@@ -4,15 +4,44 @@
  * You can provide a specific DOM document or a boolean. Boolean
  * true will create new document, false will fetch the global document.
  *
- * @param {Document|boolean} [dom]
+ * @param {mixed} [source]
  * @param {XPathNSResolver|Function|{}} [resolver]
+ * @param {string} [mimetype]
  * @returns {FluentDOM}
  * @constructor
  */
-var FluentDOM = function(dom, resolver) {
+var FluentDOM = function(source, resolver, mimetype) {
+  var dom;
 
   if (window == this) {
-    return new FluentDOM(dom, resolver);
+    return new FluentDOM(source, resolver, mimetype);
+  }
+
+  if (typeof resolver == 'string') {
+    mimetype = resolver;
+  }
+  mimetype = (typeof mimetype == 'string') ? mimetype : 'text/xml';
+
+  if (source instanceof Document) {
+    dom = source;
+  } else if (source === true) {
+    dom = document.implementation.createDocument('', '', null);
+  } else if (source === undefined || source === null) {
+    dom = document;
+  } else if ((FluentDOM.loaders instanceof Object) && FluentDOM.loaders[mimetype]) {
+    dom = FluentDOM.loaders[mimetype](source, mimetype);
+  } else if (
+    (typeof source == 'string') &&
+    ((mimetype == 'text/xml') || (mimetype == 'text/html'))
+  ) {
+    dom = (new DOMParser()).parseFromString(source, mimetype)
+  } else {
+    throw "Can not load source as " + mimetype;
+  }
+  if (dom && !dom.evaluate) {
+    if (typeof installDOM3XPathSupport != 'undefined') {
+      installDOM3XPathSupport(dom, new XPathParser());
+    }
   }
 
   /**
@@ -211,15 +240,5 @@ var FluentDOM = function(dom, resolver) {
         return new NodeList(result);
     }
   };
-
-  if (dom === true) {
-    dom = document.implementation.createDocument('', '', null);
-  } else if (!(dom instanceof Document)) {
-    dom = document;
-  }
-  if (dom && !dom.evaluate) {
-    if (typeof installDOM3XPathSupport != 'undefined') {
-      installDOM3XPathSupport(dom, new XPathParser());
-    }
-  }
 };
+FluentDOM.loaders = {};
