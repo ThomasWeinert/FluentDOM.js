@@ -1,6 +1,8 @@
 FluentDOM.js
 ============
 
+[![Build Status](https://secure.travis-ci.org/fluentdom/fluentdom.js.png?branch=master)](http://travis-ci.org/fluentdom/fluentdom.js)
+
 FluentDOM.js is a small library for DOM and XML handling.
 
 It brings concepts from the original [FluentDOM](http://fluentdom.org) project back to JavaScript.
@@ -70,4 +72,15 @@ var dom = fd.document(
 document.querySelector('#demo').textContent = dom.save();
 ```
 
+Node.js
+-------
+
+FluentDOM.js supports Node.js. It uses the [xmldom](https://github.com/bigeasy/xmldom) and 
+[xpath](https://github.com/goto100/xpath) packages. 
+ 
+Internet Explorer
+-----------------
+
+Internet Explorer has no native support for `Document:evaluate()`. Like for node.js 
+the [xpath](https://github.com/goto100/xpath) is used. The `fluentdom.min.js` includes it.
 
