@@ -7,7 +7,12 @@ module.exports = function(grunt) {
       },
       release : {
         files: {
-          'fluentdom.min.js': ['node_modules/xpath/xpath.js', 'fluentdom.js']
+          'fluentdom.min.js': ['fluentdom.js']
+        }
+      },
+      xpath : {
+        files: {
+          'xpath.min.js': ['node_modules/xpath/xpath.js']
         }
       }
     },
@@ -28,5 +33,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.registerTask('watcher', ['watch']);
-  grunt.registerTask('default', ['uglify:release']);
+  grunt.registerTask('default', ['uglify:release', 'uglify:xpath']);
 };

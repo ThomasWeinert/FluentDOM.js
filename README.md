@@ -82,5 +82,5 @@ Internet Explorer
 -----------------
 
 Internet Explorer has no native support for `Document:evaluate()`. Like for node.js 
-the [xpath](https://github.com/goto100/xpath) is used. The `fluentdom.min.js` includes it.
+the [xpath](https://github.com/goto100/xpath) is used. `xpath.min.js` is a minified version of the library.
 
