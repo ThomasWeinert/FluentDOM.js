@@ -1,0 +1,25 @@
+{
+  "name": "fluentdom-js",
+  "version": "0.0.1",
+  "homepage": "https://github.com/FluentDOM/FluentDOM.js",
+  "authors": [
+    "thomas@weinert.info"
+  ],
+  "description": "Simplify xml handling for Javascript using DOM and Xpath",
+  "main": "./fluentdom.js",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "xpath",
+    "ie-xpath",
+    "standalone"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "spec"
+  ]
+}
