@@ -1,7 +1,7 @@
 FluentDOM.js
 ============
 
-[![Build Status](https://secure.travis-ci.org/fluentdom/fluentdom.js.png?branch=master)](http://travis-ci.org/fluentdom/fluentdom.js)
+[![Build Status](https://travis-ci.org/FluentDOM/FluentDOM.js.svg?branch=master)](https://travis-ci.org/FluentDOM/FluentDOM.js)
 
 FluentDOM.js is a small library for DOM and XML handling.
 
