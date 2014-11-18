@@ -48,7 +48,7 @@ The function can use the namespace resolver, and has another functions as proper
 ```javascript
 var fd = FluentDOM(true, {'atom' : 'http://www.w3.org/2005/Atom'});
 var _ = fd.create;
-var dom = fd.document(
+document.querySelector('#demo').textContent = fd.xml(
   _(
     'atom:feed',
     _('atom:title', 'Example Feed'),
@@ -69,7 +69,48 @@ var dom = fd.document(
     )
   )
 );
-document.querySelector('#demo').textContent = dom.save();
+```
+
+FluentDOM()::evaluate
+---------------------
+
+Allows to fetch nodes and scalar values from an document. If the result is a scalar value the
+value is returned. Otherwise it is a NodeList object that provides toArray() and each().
+
+```javascript
+var read = FluentDOM(xml, {'atom' : 'http://www.w3.org/2005/Atom'}).evaluate;
+var write = FluentDOM().create;
+
+document.querySelector('#demo').appendChild(
+  write('h1', read('string(/atom:feed/atom:title)'))
+);
+document.querySelector('#demo').appendChild(
+  write.each(
+    read('/atom:feed/atom:entry').toArray(),
+    function(entry) {
+      return write(
+        'details',
+        write(
+          'summary',
+          write(
+            'h2',
+            write(
+              'a',
+              {
+                href : read('string(.//atom:link[@rel = "alternate" and @type = "text/html"]/@href)')
+              },
+              read('string(atom:title)', entry)
+            )
+          )
+        ),
+        write(
+          'div',
+          read('string(atom:summary)', entry)
+        )
+      );
+    }
+  )
+);
 ```
 
 Node.js
@@ -82,5 +123,5 @@ Internet Explorer
 -----------------
 
 Internet Explorer has no native support for `Document:evaluate()`. Like for node.js 
-the [xpath](https://github.com/goto100/xpath) is used. `xpath.min.js` is a minified version of the library.
+the [xpath](https://github.com/goto100/xpath) library is used. `xpath.min.js` is a minified version of it.
 

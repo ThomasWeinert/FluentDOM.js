@@ -32,8 +32,7 @@
         '</atom:entry>' +
       '</atom:feed>';
 
-    var fd = FluentDOM(xml, {'atom' : 'http://www.w3.org/2005/Atom'});
-    var read = fd.evaluate;
+    var read = FluentDOM(xml, {'atom' : 'http://www.w3.org/2005/Atom'}).evaluate;
     var write = FluentDOM().create;
 
     document.querySelector('#demo').appendChild(

@@ -19,7 +19,7 @@
   <script>
     var fd = FluentDOM(true, {'atom' : 'http://www.w3.org/2005/Atom'});
     var _ = fd.create;
-    var dom = fd.document(
+    document.querySelector('#demo').textContent = fd.xml(
       _(
         'atom:feed',
         _('atom:title', 'Example Feed'),
@@ -40,8 +40,6 @@
         )
       )
     );
-
-    document.querySelector('#demo').textContent = dom.save();
   </script>
 </body>
 </html>
