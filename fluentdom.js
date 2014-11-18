@@ -248,8 +248,8 @@ var FluentDOM = (
       this.create.comment = function(content) {
         return dom.createComment(content);
       };
-      this.create.pi = function(content) {
-        return dom.createProcessingInstruction(content);
+      this.create.pi = function(target, content) {
+        return dom.createProcessingInstruction(target, content);
       };
       this.create.each = function(list, callback) {
         var fragment, node, i;
