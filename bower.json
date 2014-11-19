@@ -20,6 +20,9 @@
     "**/.*",
     "node_modules",
     "bower_components",
-    "spec"
+    "examples",
+    "spec",
+    "Gruntfile.js",
+    "karma.conf.js"
   ]
 }
