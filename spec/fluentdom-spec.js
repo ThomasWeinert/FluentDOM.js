@@ -56,22 +56,42 @@ describe(
         ).toBe('<foo><?php  echo "Hello!"; ?></foo>');
       }
     );
+    it (
+      "should create iterate an array",
+      function() {
+        var fd = new FluentDOM(true);
+        var items = ['one', 'two'];
+        expect(
+          fd.xml(
+            fd.create(
+              'parent',
+              fd.create.each(
+                items,
+                function(item) {
+                  return fd.create('child', item);
+                }
+              )
+            )
+          )
+        ).toBe('<parent><child>one</child><child>two</child></parent>');
+      }
+    );
     it(
-      "should evaluate xpath returning a string",
+      "should evaluate() xpath returning a string",
       function () {
         var evaluate = (new FluentDOM('<xml/>')).evaluate;
         expect(evaluate('name(/xml)')).toBe('xml');
       }
     );
     it(
-      "should evaluate xpath returning a number",
+      "should evaluate() xpath returning a number",
       function () {
         var evaluate = (new FluentDOM('<xml>42.21</xml>')).evaluate;
         expect(evaluate('number(/xml)')).toBe(42.21);
       }
     );
     it(
-      "should evaluate xpath returning nodes",
+      "should evaluate() xpath returning nodes",
       function () {
         var fd = new FluentDOM('<xml><child>one</child><child>two</child></xml>');
         var result = '';
@@ -81,6 +101,13 @@ describe(
           }
         );
         expect(result).toBe('0: one 1: two ');
+      }
+    );
+    it(
+      "should xml() serialize a node",
+      function () {
+        var fd = new FluentDOM();
+        expect(fd.xml(fd.create('test', 'success'))).toBe('<test>success</test>');
       }
     );
   }
