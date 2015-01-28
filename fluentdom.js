@@ -63,9 +63,9 @@ var FluentDOM = (
 
         validate : function(object, type) {
           if (type > 0) {
-            return (object instanceof Object && object.nodeType === this[type]);
+            return ((object instanceof Object) && (object.nodeType == type));
           } else {
-            return (object instanceof Object && (object.nodeType > 0));
+            return ((object instanceof Object) && (object.nodeType > 0));
           }
         }
       };
